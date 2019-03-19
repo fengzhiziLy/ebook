@@ -1,18 +1,31 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <!-- <div id="read"></div> -->
+    <span class="icon-bookmark"></span>
+    <span class="icon-clock"></span>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import Epub from 'epubjs'
+global.ePub = Epub
 
 export default {
-  name: 'home',
-  components: {
-    HelloWorld
-  }
+  // name: 'home',
+  // mounted () {
+  //   this.book = new Epub('/相约星期二 - [美] 米奇·阿尔博姆.epub')
+  //   // console.log(this.book)
+  //   this.book.renderTo('read', {
+  //     width: window.innerWidth,
+  //     height: window.innerHeight
+  //   }).display()
+  // }
 }
 </script>
+
+<style scoped>
+.icon-bookmark {
+  font-size: 30px;
+  color: red;
+}
+</style>
