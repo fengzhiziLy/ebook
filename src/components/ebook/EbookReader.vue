@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+// import { mapActions } from 'vuex'
 import { ebookMixin } from '../../utils/mixin'
 import Epub from 'epubjs'
 global.ePub = Epub
@@ -28,16 +28,21 @@ export default {
     toggleTitleAndMenu () {
       // console.log('menuVisible')
       // this.$store.dispatch('setMenuVisible', !this.menuVisible)
+      if (this.menuVisible) {
+        this.setSettingVisible(-1)
+      }
       this.setMenuVisible(!this.menuVisible)
     },
     hideTitleAndMenu () {
       // this.$store.dispatch('setMenuVisible', false)
       this.setMenuVisible(false)
+      this.setSettingVisible(-1)
     },
     initEpub () {
       const url = 'http://192.168.1.5:8081/epub/' + this.fileName + '.epub'
       // console.log(url)
       this.book = new Epub(url)
+      this.setCurrentBook(this.book)
       // console.log(this.book)
       this.rendition = this.book.renderTo('read', {
         width: innerWidth,
