@@ -5,25 +5,35 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
+import { ebookMixin } from '../../utils/mixin'
 import Epub from 'epubjs'
 global.ePub = Epub
 export default {
-  computed: {
-    ...mapGetters(['fileName'])
-  },
+  mixins: [ebookMixin],
   methods: {
+    // ...mapActions(['setMenuVisible']),
     prevPage () {
       if (this.rendition) {
         this.rendition.prev()
+        this.hideTitleAndMenu()
       }
     },
     nextPage () {
       if (this.rendition) {
         this.rendition.next()
+        this.hideTitleAndMenu()
       }
     },
-    toggleTitleAndMenu () {},
+    toggleTitleAndMenu () {
+      // console.log('menuVisible')
+      // this.$store.dispatch('setMenuVisible', !this.menuVisible)
+      this.setMenuVisible(!this.menuVisible)
+    },
+    hideTitleAndMenu () {
+      // this.$store.dispatch('setMenuVisible', false)
+      this.setMenuVisible(false)
+    },
     initEpub () {
       const url = 'http://192.168.1.5:8081/epub/' + this.fileName + '.epub'
       // console.log(url)
@@ -57,7 +67,8 @@ export default {
     }
   },
   mounted () {
-    this.$store.dispatch('setFileName', this.$route.params.fileName.split('|').join('/'))
+    // this.$store.dispatch('setFileName', this.$route.params.fileName.split('|').join('/'))
+    this.setFileName(this.$route.params.fileName.split('|').join('/'))
     .then(() => {
       this.initEpub()
     })
