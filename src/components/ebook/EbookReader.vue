@@ -8,7 +8,7 @@
 // import { mapActions } from 'vuex'
 import { ebookMixin } from '../../utils/mixin'
 import Epub from 'epubjs'
-import { getFontFamily, saveFontFamily, getFontSize, saveFontSize } from '../../utils/localStorage'
+import { getFontFamily, saveFontFamily, getFontSize, saveFontSize, getTheme, saveTheme } from '../../utils/localStorage'
 global.ePub = Epub
 export default {
   mixins: [ebookMixin],
@@ -59,6 +59,18 @@ export default {
         this.setDefaultFontFamily(font)
       }
     },
+    initTheme () {
+      let defaultTheme = getTheme(this.fileName)
+      if (!defaultTheme) {
+        defaultTheme = this.themeList[0].name
+        this.setDefaultTheme(defaultTheme)
+        saveTheme(this.fileName, defaultTheme)
+      }
+      this.themeList.forEach(theme => {
+        this.rendition.themes.register(theme.name, theme.style)
+      })
+      this.rendition.themes.select(defaultTheme)
+    },
     initEpub () {
       const url = 'http://192.168.1.5:8081/epub/' + this.fileName + '.epub'
       // console.log(url)
@@ -71,6 +83,7 @@ export default {
         method: 'default'
       })
       this.rendition.display().then(() => {
+        this.initTheme()
         this.initFontSize()
         this.initFontFamily()
       })
