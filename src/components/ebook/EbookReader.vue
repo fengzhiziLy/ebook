@@ -8,6 +8,7 @@
 // import { mapActions } from 'vuex'
 import { ebookMixin } from '../../utils/mixin'
 import Epub from 'epubjs'
+import { getFontFamily, saveFontFamily, getFontSize, saveFontSize } from '../../utils/localStorage'
 global.ePub = Epub
 export default {
   mixins: [ebookMixin],
@@ -30,6 +31,7 @@ export default {
       // this.$store.dispatch('setMenuVisible', !this.menuVisible)
       if (this.menuVisible) {
         this.setSettingVisible(-1)
+        this.setFontFamilyVisible(false)
       }
       this.setMenuVisible(!this.menuVisible)
     },
@@ -37,6 +39,25 @@ export default {
       // this.$store.dispatch('setMenuVisible', false)
       this.setMenuVisible(false)
       this.setSettingVisible(-1)
+      this.setFontFamilyVisible(false)
+    },
+    initFontSize () {
+      let fontSize = getFontSize(this.fileName)
+      if (!fontSize) {
+        saveFontSize(this.fileName, this.defaultFontSize)
+      } else {
+        this.rendition.themes.fontSize(fontSize)
+        this.setDefaultFontSize(fontSize)
+      }
+    },
+    initFontFamily () {
+      let font = getFontFamily(this.fileName)
+      if (!font) {
+        saveFontFamily(this.fileName, this.defaultFontFamily)
+      } else {
+        this.rendition.themes.font(font)
+        this.setDefaultFontFamily(font)
+      }
     },
     initEpub () {
       const url = 'http://192.168.1.5:8081/epub/' + this.fileName + '.epub'
@@ -49,7 +70,10 @@ export default {
         height: innerHeight,
         method: 'default'
       })
-      this.rendition.display()
+      this.rendition.display().then(() => {
+        this.initFontSize()
+        this.initFontFamily()
+      })
       this.rendition.on('touchstart', event => {
         // console.log(event)
         this.touchStartX = event.changedTouches[0].clientX
@@ -68,6 +92,16 @@ export default {
         }
         event.preventDefault()
         event.stopPropagation()
+      })
+      this.rendition.hooks.content.register(contents => {
+        Promise.all([
+          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
+          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
+          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
+          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`)
+        ]).then(() => {
+
+        })
       })
     }
   },
