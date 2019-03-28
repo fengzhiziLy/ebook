@@ -7,3 +7,7 @@
 ### 全局主题设置
 
 > allThemes
+
+### 进度条功能
+
+> progress
