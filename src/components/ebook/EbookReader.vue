@@ -8,7 +8,7 @@
 // import { mapActions } from 'vuex'
 import { ebookMixin } from '../../utils/mixin'
 import Epub from 'epubjs'
-import { getFontFamily, saveFontFamily, getFontSize, saveFontSize, getTheme, saveTheme } from '../../utils/localStorage'
+import { getFontFamily, saveFontFamily, getFontSize, saveFontSize, getTheme, saveTheme, getLocation } from '../../utils/localStorage'
 global.ePub = Epub
 export default {
   mixins: [ebookMixin],
@@ -16,13 +16,17 @@ export default {
     // ...mapActions(['setMenuVisible']),
     prevPage () {
       if (this.rendition) {
-        this.rendition.prev()
+        this.rendition.prev().then(() => {
+          this.refreshLocation()
+        })
         this.hideTitleAndMenu()
       }
     },
     nextPage () {
       if (this.rendition) {
-        this.rendition.next()
+        this.rendition.next().then(() => {
+          this.refreshLocation()
+        })
         this.hideTitleAndMenu()
       }
     },
@@ -78,7 +82,15 @@ export default {
         height: innerHeight,
         method: 'default'
       })
-      this.rendition.display().then(() => {
+      // this.rendition.display().then(() => {
+      //   this.initTheme()
+      //   this.initFontSize()
+      //   this.initFontFamily()
+      //   this.initGlobalStyle()
+      //   this.refreshLocation()
+      // })
+      const location = getLocation(this.fileName)
+      this.display(location, () => {
         this.initTheme()
         this.initFontSize()
         this.initFontFamily()
@@ -129,6 +141,7 @@ export default {
       }).then(locations => {
         // console.log(locations)
         this.setBookAvailable(true)
+        this.refreshLocation()
       })
     }
   },
