@@ -37,7 +37,7 @@
 
 <script>
 import { ebookMixin } from '../../utils/mixin'
-import { getReadTime } from '../../utils/localStorage' 
+import { getReadTime } from '../../utils/localStorage'
 export default {
   mixins: [ebookMixin],
   computed: {
