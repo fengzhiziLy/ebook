@@ -77,7 +77,7 @@ export default {
       // console.log(url)
       this.book = new Epub(url)
       this.setCurrentBook(this.book)
-      // console.log(this.book)
+      // console.log(url, this.book)
       this.rendition = this.book.renderTo('read', {
         width: innerWidth,
         height: innerHeight,
